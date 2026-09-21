@@ -8,7 +8,7 @@ class State:
     """
     We define the State of a TM as a string representing its name, which is a string type in Python.
     We consider two State objects to be equal if their names are the same.
-    ex) 
+    ex)
         q0 = State("q0")
         q1 = State("q1")
         q0' = State("q0")
@@ -22,16 +22,16 @@ class State:
         if isinstance(other, State):
             return self.name == other.name
         return False
-    
+
     def __repr__(self):
         return self.name
-    
+
     def __hash__(self):
         return hash(self.__repr__())
 
 class Configuration:
     """
-    A configuration consists of (u, q, v) where 
+    A configuration consists of (u, q, v) where
         - q: current state
         - u: tape alphabet string on the tape left of the current tape head
         - v: tape alphabet string on the tape right of the current tape head (including current tape head location)
@@ -46,10 +46,10 @@ class Configuration:
         if isinstance(other, Configuration):
             return self.u == other.u and self.q == other.q and self.v == other.v
         return False
-    
+
     def __repr__(self):
         return "(" + self.u + "," + self.q.name + "," + self.v + ")"
-    
+
     def __hash__(self):
         return hash(self.__repr__())
 
