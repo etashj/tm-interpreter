@@ -25,6 +25,10 @@ def TM_interpret(M, x, k = None):
     config = Configuration("", M.q0, x)
     steps = [config]
 
+    if (config.q == M.q_acc): return (steps, Result.ACCEPT)
+    elif (config.q == M.q_rej): return (steps, Result.REJECT)
+    elif (len(steps)-1 == k): return (steps, Result.UNDETERMINED)
+
     while True:
         config = simulate_step(M, config)
         # TODO fill in the rest of this loop
@@ -53,7 +57,31 @@ def validate_TM(M):
     return (isinstance(M.Q, set)
         and all(isinstance(item, State) for item in M.Q)
         and M.q0 in M.Q and M.q_acc in M.Q and M.q_rej in M.Q
+        and len(M.Sigma) > 0
         and all(char in M.Gamma for char in M.Sigma)
+        and all(len(char) == 1 for char in M.Gamma)
+        and all(len(char) == 1 for char in M.Sigma)
+        and '_' in M.Gamma and '_' not in M.Sigma
+        and isinstance(M.delta, dict)
+        and all(isinstance(key, tuple) for key in M.delta)
+        and all(
+            len(key) == 2
+            and key[0] in M.Q
+            and key[1] in M.Gamma
+            for key in M.delta
+        )
+        and all(isinstance(val, tuple) for val in M.delta.values())
+        and all(
+            len(val) == 3
+            and val[0] in M.Q
+            and val[1] in M.Gamma
+            and (val[2] == 'L' or val[2] == 'R'
+            )  for val in M.delta.values()
+        )
+        and M.q_acc != M.q_rej
+        and all(M.q_acc != key[0] for key in M.delta)
+        and all(M.q_rej != key[0] for key in M.delta)
+        and all((q,s) in M.delta for q in M.Q - {M.q_acc, M.q_rej} for s in M.Gamma)
     )
 
 
